@@ -64,18 +64,24 @@ Here's what `RStudio` looks like in DataHub:
 
 The files you see in the lower right corner may look a little different.
 
--   You should see the folder `131a-labs-public`.
+-   You should see the folder `131a-labs-fall-2024`.
 -   This will be where the necessary files for each lab will be located (e.g., data files, code files, etc.).
 
 ### Transitioning to DataHub 🚂
 
 It's time to transition to the interactive version of the lab!
 
-**Important note:** When you click the URL below, the first thing you should do is notice the `Source` and `Visual` buttons at the top left of the screen.
+**Two important notes:** 
 
-- **Click on `Visual` to make the lab easier to read!**.
+1. When you click the URL below, the first thing you should do is open the `Lab00.Rmd` file, which is located inside the `lab00` directory, which is inside the `131a-labs-fall-2024` directory.
 
--   To open Lab 0 in DataHub, click on this URL: <https://r.datahub.berkeley.edu/hub/user-redirect/git-pull?repo=https%3A%2F%2Fgithub.com%2Fepurdom%2FStat131Public&urlpath=rstudio>
+After Step 1, you should notice the `Source` and `Visual` buttons at the top left of the screen.
+
+2. Click on `Visual` to make the lab easier to read!
+
+❗❗❗Did you read the two instructions above? If not, do so before clicking the link below.❗❗❗
+
+-   To open Lab 0 in DataHub, click on this URL: <https://r.datahub.berkeley.edu/hub/user-redirect/git-pull?repo=https%3A%2F%2Fgithub.com%2Fberkeley-stat131a%2F131a-labs-fall-2024&branch=main&urlpath=rstudio%2F>
 
 **At this point in Lab 0, we will assume you are working from `RStudio` in DataHub, and not looking at the HTML version of the lab.**
 
