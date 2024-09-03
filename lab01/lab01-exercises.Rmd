@@ -16,6 +16,12 @@ By the end of the lab, you'll have foundational understanding of the following:
 2.  📈 How to make an informative plot with `R`
 3.  ⚖️ How to approach questions about social policy with data.
 
+Labs are submitted via Gradescope. 
+
+- You will submit both (1) a .Rmd file with your code and (2) a PDF containing the code and output. 
+- You can generate a PDF in RStudio by pressing `Knit` and then `Knit to PDF`.
+- The knitting process will not work if there are errors in your code, so be sure to leave plenty of time to knit your lab notebooks before the deadline.
+
 ## ✅ Set up
 
 While the core `R` language contains many useful functions (e.g., `sum` and `sample`), there is vast functionality built on top of `R` by community members.
