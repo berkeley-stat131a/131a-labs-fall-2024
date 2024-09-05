@@ -6,11 +6,11 @@ title: "R Notebook"
 
 **Due Date**: Monday September 9th at midnight (i.e., one minute after 11:59pm)
 
-Labs are submitted via Gradescope. 
+Labs are submitted via Gradescope.
 
-- You will submit both (1) a .Rmd file with your code and (2) an HTML file containing the code and output. 
-- You can generate an HTML file in RStudio by pressing `Knit` and then `Knit to HTML`.
-- The knitting process will not work if there are errors in your code, so be sure to leave plenty of time to knit your lab notebooks before the deadline.
+-   You will submit both (1) a .Rmd file with your code and (2) an HTML file containing the code and output.
+-   You can generate an HTML file in RStudio by pressing `Knit` and then `Knit to HTML`.
+-   The knitting process will not work if there are errors in your code, so be sure to leave plenty of time to knit your lab notebooks before the deadline.
 
 ## Introduction
 

@@ -1,0 +1,250 @@
+---
+title: "R Notebook"
+---
+
+# STAT 131A, Fall 2024: Homework 1 Coding Questions
+
+## Question 1
+
+This question continues where Lab 1 concluded.
+
+Make sure to run the cell below before getting started.
+
+```{r}
+# Load in additional functions
+library(tidyverse)
+library(lubridate)
+library(glue)
+
+# Use three digits past the decimal point
+options(digits = 3)
+
+# Format plots with a white background and dark features.
+theme_set(theme_bw())
+
+# This is where the data is stored on DataHub.
+STOPS_PATH = "../lab01/data/nyc_stops.rds"
+
+# Read in the data
+stops = read_rds(STOPS_PATH)
+
+# Create population data for 2010
+pop_2010 = tribble(
+  ~race, ~pop,
+  # Black, non-Hispanic
+  "Black", 1776891,
+  # Hispanic, any race
+  "Hispanic", 2490350,
+  # White, non-Hispanic
+  "White", 2719856
+)
+
+pop_2010 = pop_2010 %>% 
+  mutate(
+    prop = pop/sum(pop)
+  )
+
+```
+
+#### Part A
+
+Calculate the proportion of all stops, frisks, and weapon recoveries that occurred among NYC individuals of each race and ethnicity.
+
+- For example, your output data frame should provide the proportion of all frisks conducted in NYC that were of Black individuals. This proportion should be a number between 0 and 1.
+
+- Your output data frame should have three rows.
+
+```{r}
+# Your code here!
+
+# As a reminder, here's how we did this for stops:
+stop_counts = stops %>%
+  group_by(race) %>%
+  summarize(n_stops = n()) %>%
+  ungroup()
+
+```
+
+What do you conclude from your findings? How could someone use these results to mislead their audience?
+
+- Answer in no more than seven sentences. 
+
+- Write your answer as a code comment.
+
+```{r}
+# Your answer as a code comment here!
+
+```
+
+#### Part B
+
+For each race and ethnicity, calculate the ratio of (a) stop proportion, (b) frisk
+proportion, and (c) weapon proportion (calculated in Part A) to the corresponding 
+population proportion.
+
+- For example, your output dataframe should provide the ratio of (1) the proportion of all stops involving a Black individual and (2) the proportion
+of the NYC residential population that identifies as Black.
+
+- In total, you should calculate three ratios for each race and ethnicity. 
+
+- The idea here is to assess how many more or fewer stops, frisks, and weapon recoveries we observe relative to each group's share of the population.
+
+```{r}
+# Your code here!
+
+```
+
+What do you conclude from your findings? How could someone use these results to mislead their audience?
+
+- Answer in no more than seven sentences.
+
+- Write your answer as a code comment.
+
+```{r}
+# Your answer as a code comment here!
+
+```
+
+
+#### Part C
+
+First, filter the `stops` data to individuals who identify as Black. 
+
+Second, for Black individuals in each precinct, calculate the fraction of stops that resulted in a frisk (the "frisk rate"). 
+
+Store your result in a dataframe.
+
+Repeat the two steps above for white individuals.
+
+You should have two dataframes in total. Print them both.
+
+```{r}
+# Your code here!
+
+
+```
+
+#### Part D
+
+For each precinct, calculate the ratio of the frisk rate of Black individuals to the frisk rate of white individuals. 
+
+- This will require you to merge the two dataframes that you created in Part C.
+
+```{r}
+# Your code here!
+
+```
+
+What do you conclude from your findings? How could you present this result concisely to a non-technical audience?
+
+- Answer in no more than five sentences.
+
+```{r}
+# Your answer as a code comment here!
+
+```
+
+#### Part E
+
+Using your merged data from Part D, create a plot with the following features:
+
+- On the x-axis, plot the frisk rate for Black individuals.
+- On the y-axis, plot the frisk rate for white individuals.
+- Size the points by the number of stops of Black and white individuals in each precinct.
+- Add a dashed "y=x" line to your plot.
+
+```{r}
+# Your code here!
+
+```
+
+What do you conclude from your findings?
+
+- Answer in no more than five sentences.
+
+```{r}
+# Your answer as a code comment here!
+
+```
+
+#### Part F
+
+Repeat Part E, but instead of calculating frisk rates, calculate the proportion of **frisks** (not stops) that resulted in a weapon recovery ("hit rate").
+
+```{r}
+# Your code here!
+
+```
+
+What do you conclude from your findings?
+
+- Answer in no more than seven sentences.
+
+```{r}
+# Your answer as a code comment here!
+
+```
+
+#### Concluding remarks on Question 1
+
+In the final exercise, you conducted an **outcome test**. 
+
+- Figure 3 in [this paper](https://5harad.com/papers/100M-stops.pdf) shows the result of an outcome test applied to large-scale policing data. 
+
+Outcome tests can be used to detect potential discrimination not just in policing.
+For example, you might think about how you could use an outcome test to detect discrimination in bank lending or hiring decisions.
+
+## Question 2
+
+Drawing on the summary statistics and descriptors from lecture (e.g., symmetry, modality, and skewness), describe the distribution of starting salaries of a representative sample of law school graduates from 2023.
+The data is in `data/law-school-salaries.csv`.
+
+- Support your data description by making one *relative* frequency histogram, one boxplot, and one paired boxplot. (You might take a moment to think about how much you learned from your summary statistics versus your plots!)
+
+- Your data description should be no more than five sentences. 
+
+- Write about what you think is most important! At the minimum, you should give some sense of the data distribution's shape, center, and spread.
+
+- You are welcome to make additional plots if you'd like, but only these three are required. 
+
+- Recall the difference between an EDA plot (your eyes only!) and a plot that is meant to communicate information to others.
+Your plots should have the formatting of the latter, not the former. 
+
+*Note: This problem uses a synthetic, but representative, sample of salaries based on publicly reported aggregate data. The actual salaries of individual law school graduates are confidential.*
+
+```{r}
+# Your code for importing the data and calculating summary statistics here!
+
+```
+
+```{r}
+# Your histogram code here!
+
+```
+
+```{r}
+# Your boxplot code here!
+
+```
+
+```{r}
+# Your paired boxplot code here!
+
+```
+
+```{r}
+# Your data description as a code comment in this cell!
+
+```
+
+Do have a guess as to why the distribution of law school new grad salaries looks the way it does?
+
+- Answer in no more than three sentences. Write your answer as a code comment.
+
+- Note that this answer is graded on thoughtfulness, not on correctness. You are welcome to Google the topic to learn more. 
+
+```{r}
+# Write your answer as a code comment in this cell!
+
+
+```
