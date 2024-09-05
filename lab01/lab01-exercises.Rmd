@@ -8,8 +8,8 @@ title: "R Notebook"
 
 Labs are submitted via Gradescope. 
 
-- You will submit both (1) a .Rmd file with your code and (2) a PDF containing the code and output. 
-- You can generate a PDF in RStudio by pressing `Knit` and then `Knit to PDF`.
+- You will submit both (1) a .Rmd file with your code and (2) an HTML file containing the code and output. 
+- You can generate an HTML file in RStudio by pressing `Knit` and then `Knit to HTML`.
 - The knitting process will not work if there are errors in your code, so be sure to leave plenty of time to knit your lab notebooks before the deadline.
 
 ## Introduction
