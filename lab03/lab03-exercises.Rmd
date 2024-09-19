@@ -12,6 +12,7 @@ output:
 **Due Date**: Monday September 23rd at midnight.
 
 -   **Your Lab 3 submission must also included a completed PDF of the Lecture 8 worksheet.** We recommend that you complete the worksheet before attempting the lab.
+-   You can ignore the two normal distribution plots at the very end of the worksheet.
 
 Labs are submitted via Gradescope.
 
