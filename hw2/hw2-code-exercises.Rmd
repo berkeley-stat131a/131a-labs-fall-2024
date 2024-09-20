@@ -4,7 +4,9 @@ title: "R Notebook"
 
 # STAT 131A, Fall 2024: Homework 2 Coding Questions
 
-## Question 1: Spam classification with Naive Bayes
+## Question 1: Spam classification with Naive Bayes (optional)
+
+**Note: Question 1 is now optional. If you decide to complete it, it is worth up to five points of extra credit.)**
 
 Make sure to run the cell below before getting started.
 
@@ -85,7 +87,7 @@ For an email containing the words "free" and "money", estimate the numerator of 
 
 ```
 
-### Part E (optional, 5 points extra credit)
+### Part E
 
 If we had many emails, it would be inefficient to manually calculate the numerator of the Bayes' Rule expression over and over.
 
