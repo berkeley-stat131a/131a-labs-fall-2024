@@ -1,0 +1,180 @@
+---
+title: "Blood glucose and confidence intervals with R"
+output:
+  html_document:
+    df_print: paged
+editor_options: 
+  markdown: 
+    wrap: sentence
+---
+
+# 🩸 Lab 4, Part B: Blood glucose and confidence intervals with `R`
+
+<img src="img/cgm.jpeg" alt="“cgm”" width="400"/>\
+
+<img src="img/confidence_interval_xkcd.png" alt="“bootstrap-cartoon”" width="200"/>\
+
+**Due Date**: Friday October 4th at midnight.
+
+-   **Your Lab 4 submission (Parts A and B) must also included a completed PDF of the Lecture 9 worksheet.** We recommend that you complete the worksheet before attempting the lab.
+
+Labs are submitted via Gradescope.
+
+-   You will submit (1) the two .Rmd files with your code from parts A and B, (2) the two PDFs of your code and output from parts A and B, and (3) a PDF of your completed Lecture 9 worksheet.
+-   To generate a PDF of your code and output, **do not knit to PDF**. Instead, knit your .Rmd file as HTML, open the HTML file in a web browser, and then **print the HTML as a PDF, making sure that none of your code or output is cut off.** You can generate an HTML file in RStudio by pressing `Knit` and then `Knit to HTML`.
+-   The knitting process will not work if there are errors in your code, so be sure to leave plenty of time to knit your lab notebooks before the deadline.
+
+# ✅ Set up
+
+Make sure to run the cell below.
+It imports additional useful functions, adjusts R settings, and loads in data.
+
+```{r}
+# Load in additional functions
+library(tidyverse)
+library(lubridate)
+
+# Use three digits past the decimal point
+options(digits = 3)
+
+# Format plots with a white background and dark features.
+theme_set(theme_bw())
+
+# Load in the data
+data = read_csv("https://jdgrossman.com/assets/hba1c-cgm-data.csv")
+
+head(data)
+```
+
+## 🩸 Background info on blood glucose, HbA1c, and CGMs
+
+[Diabetes mellitus](https://en.wikipedia.org/wiki/Diabetes) is a group of diseases characterized by an inability of the body to properly maintain healthy blood glucose levels.
+
+-   Having high blood glucose for long periods of time can lead to [serious health complications](https://www.cdc.gov/diabetes/managing/problems.html), such as nerve damage and heart disease.
+
+The [glycated hemoglobin (HbA1c)](https://en.wikipedia.org/wiki/Glycated_hemoglobin) test was introduced in the late 1970s as a way to monitor long-term trends in blood glucose levels.
+
+-   HbA1c values above 6.4% are typically indicative of diabetes.
+    Values above 7% are associated with long-term complications, with higher values associated with more severe complications.
+
+-   Patients with diabetes are typically instructed to have their blood drawn every three months to monitor their HbA1c.
+
+[Continuous glucose monitors (CGMs)](https://en.wikipedia.org/wiki/Continuous_glucose_monitor) allow patients with diabetes to see a real-time output of their blood glucose levels.
+
+-   The picture at the top of this lab is an example of a CGM.
+
+-   The first CGM was introduced in 1999, but CGM adoption did not begin to accelerate until about 10 years later.
+
+-   Thus, HbA1c measurement is still the gold standard for predicting long-term health outcomes in patients with diabetes, as there simply has not been as much time for CGM measurements to be formally correlated with longer-term health outcomes.
+
+> To see Josh's current CGM output, visit [this website](https://jgrossman-new.herokuapp.com).
+
+In a later lab, we will assess the relationship between CGM output and HbA1c among a sample of 100 patients with diabetes.
+In this lab, you will begin working the same dataset.
+For each patient, you have the following data:
+
+1.  `a1c_value`: An HbA1c measurement. HbA1c is often abbreviated as A1c.
+2.  `mean_bg`: The patient's CGM-measured average blood glucose (BG) in the several weeks or months before their HbA1c was measured.
+3.  `time_in_range`: The proportion of CGM blood glucose measurements that were in the healthy range of 70 mg/dL to 180 mg/dL. Often abbreviated as TIR.
+
+For the purposes of this assignment, you can assume that the 100 patients in the data were randomly drawn from the same population.
+
+## 🔔 Constructing normally-approximated confidence intervals
+
+The CLT allows us to construct normally-approximated confidence intervals for estimators that satisfy the CLT.
+
+In lecture, we saw that if
+
+$$\hat{\theta}_n \approx N(\theta, \hat{\text{se}}^2)$$
+
+and
+
+$$C_n = (\hat{\theta}_n - z_{\alpha/2}\text{se}, \ \hat{\theta}_n + z_{\alpha/2}\text{se})$$
+
+then
+
+$$\Pr(\theta \in C_n) \approx 1-\alpha$$
+
+For a 95% confidence interval, $\alpha=0.05$.
+
+Further, recall that the standard error of a sample mean is the standard deviation of the data-generating distribution, divided by the square root of the sample size:
+
+$$
+\text{se} = \frac{\sigma}{\sqrt{n}}
+$$
+
+### 🚀 Exercise 1
+
+What is the estimated standard error of the mean time in range for the 100 patients in the dataset?
+
+```{r}
+# Your code here!
+
+```
+
+### 🚀 Exercise 2
+
+If $z_{\alpha/2} = \Phi^{-1}(1 - \frac{\alpha}{2})$, where $\Phi$ is the CDF of the standard normal distribution, what is $z_{\alpha/2}$ for a 95% confidence interval?
+What about an 80% confidence interval?
+
+```{r}
+# Your code here!
+
+```
+
+### 🚀 Exercise 3
+
+Putting it all together, what is a 95% normally-approximated analytic confidence interval for the mean time in range?
+What is the 80% confidence interval?
+
+-   In a code comment, interpret the meaning of these confidence intervals. You may find it useful to read this Wikipedia section: <https://en.wikipedia.org/wiki/Confidence_interval#Interpretation>
+
+```{r}
+# Your code here!
+
+```
+
+### 🚀 Exercise 4
+
+With your function `calculate_boot_se` from Part A, estimate the bootstrapped standard error of the mean time in range.
+
+-   Then, reconstruct your 95% and 80% normally-approximated confidence intervals using the bootstrapped standard error, instead of the analytic standard error.
+
+-   How do your bootstrapped confidence intervals compare to the analytic confidence intervals?
+    Answer in a code comment.
+
+```{r}
+# Your code here!
+
+```
+
+### 🚀 Exercise 5
+
+What are the 80% and 95% percentile confidence intervals for the mean time in range?
+
+-   How do the intervals compare to the normally-approximated bootstrap confidence intervals?
+    Answer in a code comment.
+
+-   Hint: You may need to deconstruct your `calculate_boot_se` function.
+    We recommend writing a new `get_boot_dist` function that returns the bootstrapped-approximated distribution of synthetic point estimates.
+
+-   The `quantile` function can grab quantiles (i.e., percentiles) from a vector.
+    See `?quantile` for more info!
+
+```{r}
+# Your code here!
+
+```
+
+### Exercise 6
+
+What is the 95% percentile confidence interval for the 10th percentile of time in range?
+
+-   This confidence interval would inform us about the patients with lower values of time in range.
+
+-   Hint: You may want to define a helper function that grabs the 10th percentile of a vector using `quantile`.
+
+```{r}
+# Your code here!
+
+```
