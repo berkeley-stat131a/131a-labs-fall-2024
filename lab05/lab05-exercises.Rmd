@@ -1,0 +1,245 @@
+---
+title: "Single-proportion z-tests with R"
+output:
+  html_document:
+    df_print: paged
+editor_options: 
+  markdown: 
+    wrap: sentence
+---
+
+# 🪙 Lab 5: Single-proportion z-tests with `R`
+
+<img src="img/null_hypothesis.png" width="200"/> <img src="img/p_values.png" width="200"/>\
+*Image credits: xkcd*
+
+**Due Date**: Friday October 11th at midnight.
+
+Labs are submitted via Gradescope.
+
+-   You will submit (1) a .Rmd file with your code, (2) a PDF of your code and output.
+-   To generate a PDF of your code and output, **do not knit to PDF**. Instead, knit your .Rmd file as HTML, open the HTML file in a web browser, and then **print the HTML as a PDF, making sure that none of your code or output is cut off.** You can generate an HTML file in RStudio by pressing `Knit` and then `Knit to HTML`.
+-   The knitting process will not work if there are errors in your code, so be sure to leave plenty of time to knit your lab notebooks before the deadline.
+
+# ✅ Set up
+
+Make sure to run the cell below.
+It imports additional useful functions, adjusts R settings, and loads in data.
+
+```{r}
+
+# Initialize everyone's random number generator to be the same
+set.seed(1)
+
+# Load in additional functions
+library(tidyverse)
+library(lubridate)
+
+# Use three digits past the decimal point
+options(digits = 3)
+
+# Format plots with a white background and dark features.
+theme_set(theme_bw())
+
+# Coin flips from a coin with an unknown value of p.
+# Don't edit this! 
+coin_flips = c(1, 0, 1, 0, 0, 1, 1, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+```
+
+## ⏮️ Background
+
+In Lecture 11a, we talked about hypothesis testing in the context of two scenarios:
+
+1.  Determining whether the average effect of an ADHD drug is significantly different than 0, based on a sample of patients who were randomly assigned to the drug or a placebo.
+
+2.  Determining whether a particular coin is fair (i.e., $\Pr(\text{Heads})=0.5$), based on a random sample of coin flips.
+
+In this part of the lab, we will explore the second scenario.
+
+### 🚀 Exercise 1
+
+Using a sample of coin flips, called `coin_flips`, construct a 90% confidence interval for the true proportion of heads.
+
+-   Recall the formula of a confidence interval for a proportion:
+
+$$\hat{p} \pm z_{\alpha/2} \times \text{SE}(\hat{p}),$$
+
+where $\hat{p}$ is the sample proportion, $z_{\alpha/2}$ is the z-value corresponding to a right-tailed area of $\alpha/2$ under the normal distribution, and $\text{SE}(\hat{p})$ is the standard error of the sample proportion.
+
+-   You may find the `qnorm` function helpful for calculating $z_{\alpha/2}$.
+
+-   Finally, recall that the standard error of a sample proportion is given by the following:
+
+$$\text{SE}(\hat{p}) = \sqrt{\frac{p(1-p)}{n}}$$
+
+```{r}
+# Your code here!
+
+```
+
+### 🏗️ Constructing the sampling distribution of the estimator under the null hypothesis
+
+We're now going to change our perspective a bit.
+
+-   Suppose we flipped a **fair** coin 30 times (i.e., the probability of heads is 50%).
+
+-   Note that `length(coin_flips)` is 30.
+
+Our key question: **If we flipped a fair coin, how likely would it be for us to obtain a sample of 30 coin flips with 11 or fewer heads?**
+
+-   Note that `sum(coin_flips)` is 11.
+    That's where the 11 is coming from!
+
+-   Our null hypothesis is that the coin is fair (i.e., p = 0.5).
+
+-   We want to test whether our observed sample is consistent with this null hypothesis, or if something else might be going on.
+
+To get at this question, we first need to think about parallel universes:
+
+-   `rbinom(n = 100000, size = 30, prob = 0.5)` simulates 100,000 samples of 30 coin flips from a fair coin:
+
+```{r}
+simulated_coin_flips = rbinom(n = 100000, size = 30, prob = 0.5)
+simulated_coin_flips[1:10]
+```
+
+-   If we divide each of our simulated flips by 30, we can calculate the proportion of heads in each of the 100,000 samples.
+
+```{r}
+simulated_prop_heads = simulated_coin_flips / 30
+simulated_prop_heads[1:10]
+```
+
+-   If we plot these 100,000 simulated proportions, you may see a familiar pattern!
+
+```{r}
+ggplot() +
+  geom_histogram(
+    aes(x = simulated_prop_heads),
+    
+    # Choosing a number of bins that avoids gaps in the plot.
+    # You might play around with this number to see how the distribution changes.
+    bins = 23
+  )
+```
+
+What you're looking at above is a simulation of the **exact sampling distribution** of the sample proportion when `n=30` and `p=0.5`.
+
+-   As it turns out, as long as `n` is large enough, we can approximate the exact sampling distribution with a normal distribution!
+
+-   This normal distribution has a mean of 0.5 (i.e., the true proportion of heads) and a standard deviation of $\sqrt{\frac{p(1-p)}{n}} = \sqrt{\frac{0.5 \times 0.5}{30}}$ (i.e., the standard error of the sample proportion when $p=0.5$).
+
+```{r}
+ggplot() +
+  geom_histogram(
+    
+    # This time, we will plot density on the y-axis, instead of count.
+    # We do this because our normal distribution (plotted below) 
+    # has density as its height. 
+    aes(x = simulated_prop_heads, y = ..density..),
+    bins = 23
+    
+  ) +
+  # Overlay a normal distribution with a mean of 0.5 (since p=0.5),
+  # and a standard deviation equal to the standard error of the sample proportion.
+  geom_function(
+    fun = dnorm,
+    args = list(mean = 0.5, sd = sqrt(0.5 * 0.5 / 30)),
+    color = "red"
+  )
+```
+
+### 🚀 Exercise 2
+
+Let's return to our key question: **If we flipped a fair coin, how likely would it be for us to obtain a sample of 30 coin flips with 11 or fewer heads?**
+
+To answer this question, find the area under the sampling distribution to the left of 11/30.
+
+-   As above, we will approximate the sampling distribution with a normal distribution.
+
+-   This normal distribution has a mean of 0.5 (i.e., the true proportion of heads) and a standard deviation of $\sqrt{\frac{p(1-p)}{n}} = \sqrt{\frac{0.5 \times 0.5}{30}}$ (i.e., the standard error of the sample proportion when $p=0.5$).
+
+-   `pnorm` may come in handy.
+
+```{r}
+# Your code here!
+
+```
+
+### 🚀 Exercise 3
+
+In the last exercise, we calculated a **one-sided p-value**.
+
+-   A one-sided p-value is the probability of observing a test statistic as extreme as the one we actually observed, and in specific direction (either left or right), assuming the null hypothesis is true.
+
+-   One-sided hypothesis tests are rarely used in practice!
+
+-   Instead, we typically use **two-sided hypothesis tests**.
+
+For a two-sided hypothesis test, we evaluate the probability of observing a test statistic as extreme as the one we actually observed, **but we have to consider extremities on both sides of the estimand assumed by the null hypothesis.**
+
+Below, plot the normally-approximated sampling distribution from above, and include vertical lines at the two extremities: (1) the point estimate, and (2) the estimate as extreme as the observed point estimate, but in the opposite direction.
+
+```{r}
+# Your code here!
+
+```
+
+### 🚀 Exercise 4
+
+What is the two-sided p-value corresponding to the null hypothesis that the coin is fair?
+
+```{r}
+# Your code here!
+
+```
+
+### 🖥️ Using `prop.test` to run hypothesis tests and create confidence intervals
+
+Above, you conducted a two-sided single-proportion z-test.
+
+-   Our null hypothesis was $p=0.5$.
+
+-   We observed 11 heads out of a sample size of 30.
+
+-   Our two-sided p-value was 0.144.
+
+As it turns out, `R` has a built-in function for conducting single-proportion z-tests!
+
+-   `prop.test(x, n, p, conf.level, correct=FALSE)` will conduct a two-sided single-proportion z-test for a sample with `x` successes out of `n` trials, where the null hypothesis is that the true proportion is `p`.
+
+    -   `prop.test` will also provide a confidence interval corresponding to the inputted `conf.level`, which is a value between 0 and 1.
+
+    -   To run a test like we have done in the previous exercises, we have to include `correct=FALSE`.
+        This argument refers to the [Yates' continuity correction](https://en.wikipedia.org/wiki/Yates%27s_correction_for_continuity), which is beyond the scope of this course.
+
+### 🚀 Exercise 5
+
+Use `prop.test` to conduct a two-sided single-proportion z-test for our coin flip data given the null hypothesis that $p=0.5$.
+Make sure to also return a 90% confidence interval.
+
+-   Did you obtain a similar p-value and confidence interval as above?
+
+-   Note: Your confidence interval should be slightly different.
+    This is because `prop.test` calculates confidence intervals in a slightly more precise way.
+    Nothing to be concerned about!
+
+```{r}
+# Your code here!
+
+# prop.test does some extra rounding for p-values.
+# Running the line of code below will show a couple extra decimal places.
+# Two to three significant digits are usually all that's needed!
+options(digits=6)
+
+```
+
+### 🚀 Exercise 6
+
+Based on the p-value you obtained, can we conclude that the coin is not fair?
+If not, what can we conclude?
+
+```{r}
+# Your answer as a code comment here!
+
+```
