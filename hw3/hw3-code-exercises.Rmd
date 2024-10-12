@@ -10,6 +10,7 @@ Use this space to write any code you used for the confidence interval question f
 
 ```{r}
 # Your code here!
+
 ```
 
 ## Hypothesis test
@@ -18,6 +19,7 @@ Use this space to write any code you used for the hypothesis test question from 
 
 ```{r}
 # Your code here!
+
 ```
 
 ## Power
@@ -26,6 +28,7 @@ Use this space to write any code you used for the power calculation from the mat
 
 ```{r}
 # Your code here!
+
 ```
 
 ## 🩸 Blood glucose and the bootstrap
@@ -134,11 +137,11 @@ $$ \sum_{i=1}^n \left(y_i - \hat{y}_i \right)^2, $$ where $n$ is the number of p
 
 -   The predicted HbA1c is given by the line of best fit, $\hat{y}_i = \text{intercept} + \text{slope} * x_i$.
 
-Putting it all together, we want to identify the **slope** and **intercept** that minimize the following expression:
+Putting it all together, we want to identify the **slope** and **intercept** that minimize the sum of squared differences written above. We can concisely write this objective as follows:
 
 $$ \underset{\text{slope}, \text{intercept}}{\mathrm{arg\,min}} \sum_{i=1}^n \left(y_i - (\text{intercept} + \text{slope}*x_i \right)^2$$
 
-By taking [partial derivatives](https://en.wikipedia.org/wiki/Partial_derivative) with respect to the $\text{slope}$ and $\text{intercept}$ parameters, we can show the following formulas provide the optimal slope and intercept:
+By taking [partial derivatives](https://en.wikipedia.org/wiki/Partial_derivative) with respect to the $\text{slope}$ and $\text{intercept}$ parameters, we can show that the following formulas provide the optimal slope and intercept:
 
 $$ \text{slope}_\text{optimal} = \frac{\sum_{i=1}^n (x_i - \bar{x})(y_i - \bar{y})}{\sum_{i=1}^n (x_i - \bar{x})^2} $$
 
@@ -146,7 +149,7 @@ $$ \text{intercept}_\text{optimal} = \bar{y} - \text{slope}_\text{optimal} * \ba
 
 If you have not taken multivariable calculus, you probably have not seen the term "partial derivative" before. But, that's okay! You will not need to take partial derivatives in 131A.
 
--   Regardless of your math background, it's critical to understand **why** we have the formulas above: These equations minimize the sum of squared vertical distances from each point to the line.
+-   Regardless of your math background, it's critical to understand **why** we have the formulas above: These equations minimize the sum of squared vertical distances (i.e., the sum of squared residuals) from each point to the line.
 
 ### 🚀 Exercise 2
 
@@ -164,6 +167,14 @@ Then, using your function, print the optimal slope for each the two plots from E
 
 ```{r}
 # Your code and printed output here!
+
+# Some starter code to think about vector operations in R:
+x = c(1,2,3,4,5)
+m = mean(x)
+x_diff = x - m
+print(x_diff)
+print(x * x_diff)
+print(x_diff^2)
 
 ```
 
@@ -185,17 +196,19 @@ Imagine that we had sampled a different random set of 100 patients from the same
 
 -   Using your `get_optimal_slope` function from above, run the bootstrap method with `B=10000` to estimate the standard error of the optimal slope.
 
+-   Remember the key steps of the bootstrap: Generate `B` synthetic samples, and then use these samples to generate `B` synthetic point estimates. These `B` synthetic point estimates form the synthetic sampling distribution.
+
 -   While you could technically use your `get_boot_se` function from Lab 4, you may find it easier to write fresh code with the `replicate` function.
 
 -   To generate a single bootstrap resample, you might find it helpful to resample with replacement from `1:100`, and then use your random resample to index your `x` and `y` vectors.
 
-- For example, `x[idx]` will select the elements of `x` at the positions given by `idx`. `idx` can have repeated values!
+-   For example, `x[idx]` will select the elements of `x` at the positions given by `idx`. `idx` can have repeated values!
 
 -   There are lots of ways to do this question correctly. Try not to lean too heavily on PingPong to do the code planning for you.
 
-How does your standard error compare to the standard error of the slope provided by `summary(lm(...))`? 
+How does your standard error compare to the standard error of the slope provided by `summary(lm(...))`?
 
-- Write your answer as code comment.
+-   Write your answer as code comment.
 
 ```{r}
 # Your code and code comment here!
