@@ -161,7 +161,7 @@ Write a function `get_optimal_slope` to compute the optimal slope parameter give
 
 -   You should assume that the $x$ and $y$ values are in the same order. In other words, the $i^\text{th}$ element of the $x$ vector and the $i^\text{th}$ element of the $y$ vector both belong to the $i^\text{th}$ patient.
 
-Then, using your function, print the optimal slope for each the two plots from Exercise 4.
+Then, using your function, print the optimal slope for each the two plots from Exercise 1.
 
 -   You are welcome to use an outside function like `lm` to confirm your answer, but you must implement the formula by hand.
 
