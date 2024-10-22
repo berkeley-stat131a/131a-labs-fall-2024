@@ -1,0 +1,279 @@
+---
+title: "Used cars and linear regression"
+output:
+  html_document:
+    df_print: paged
+editor_options: 
+  markdown: 
+    wrap: sentence
+---
+
+# 🚘 💵 Lab 7, Part A: Used cars and linear regression
+
+<img src="img/cars.jpeg" alt="“cars”" width="500"/>\
+
+**Due Date**: Monday, October 28th at midnight.
+
+Labs are submitted via Gradescope.
+
+-   You will submit (1) a .Rmd file with your code, (2) a PDF of your code and output.
+-   To generate a PDF of your code and output, **do not knit to PDF**. Instead, knit your .Rmd file as HTML, open the HTML file in a web browser, and then **print the HTML as a PDF, making sure that none of your code or output is cut off.** You can generate an HTML file in RStudio by pressing `Knit` and then `Knit to HTML`.
+-   The knitting process will not work if there are errors in your code, so be sure to leave plenty of time to knit your lab notebooks before the deadline.
+
+## ✅ Setup and data import
+
+In this lab, we'll explore correlation, simple linear regression, multiple regression, and confidence intervals with used car data from [Edmunds.com](https://edmunds.com).
+
+-   **Our goal:** Predict the price of a used car using its features (e.g., color).
+
+> People often use the term ordinary least squares (OLS) as a synonym for linear regression.
+
+```{r}
+# Load in additional functions
+library(tidyverse)
+library(lubridate)
+
+# Use three digits past the decimal point
+# Don't use scientific notation
+options(digits = 3, scipen=999)
+
+# Format plots with a white background and dark features.
+theme_set(theme_bw())
+
+cars = read_tsv("https://jdgrossman.com/assets/used-cars.tsv")
+
+# peek at 10 random rows
+sample_n(cars, 10)
+```
+
+## 🚀 Exercise 1
+
+Create a new dataframe that filters just to used Honda Accords.
+
+-   Call this new dataset `accords`.
+
+-   How many cars are in `accords`?
+
+```{r}
+# Your code here!
+
+```
+
+## Using `ggplot2` to visualize linear regression
+
+Using `geom_smooth`, we can visualize different statistical models.
+
+For example, if we specify `x` and `y` inside `aes`, we can use `geom_smooth` to produce a LOESS curve, which we will learn about later in the course.
+
+-   LOESS is more **flexible** than linear regression (i.e., wigglier!) but less **interpretable**.
+
+-   LOESS is especially useful when you have a really high density of data points.
+    More on LOESS later in the course.
+
+```{r}
+ggplot(accords, aes(x = mileage, y = price)) +
+  geom_point() +
+  geom_smooth()
+```
+
+To fit a linear regression model with `ggplot2`, we have to pass in `method='lm'` as a named argument to `geom_smooth`.
+
+-   `lm` stands for "linear model". Later in the lab, we will fit linear models with the `lm()` function.
+
+```{r}
+ggplot(accords, aes(x = mileage, y = price)) +
+  geom_point() +
+  geom_smooth(method='lm')
+```
+
+We can increase the complexity of our regression model by specifying a **regression formula** into `geom_smooth`.
+
+-   The default formula is `y ~ 1 + x`.
+
+-   To fit a quadratic model, we can specify `y ~ 1 + x + I(x^2)`.
+
+```{r}
+ggplot(accords, aes(x = mileage, y = price)) +
+  geom_point() +
+  geom_smooth(
+    method='lm', 
+    formula = y ~ 1 + x + I(x^2)
+  )
+```
+
+## 🚀 Exercise 2
+
+Using `ggplot2`, make a single plot that shows the linear, quadratic, and cubic fit of `price` as a function of `mileage`.
+
+-   Color each line differently by using the `color` argument of `geom_smooth`.
+
+-   Hide the error bands by passing `se=FALSE` to `geom_smooth`.
+
+-   Reduce the linewidth by using the `size` function of `geom_smooth`.
+
+```{r}
+# Your code here!
+
+```
+
+## Fitting simple linear regression models
+
+Let's now estimate the coefficients of a simple linear regression predicting `price` from `mileage` in the `accords` dataset.\`
+
+We can fit a regression of outcome column `y` to input column `x` by using the `lm()` function and specifying the `accords` dataset.
+
+```{r}
+model1 = lm(price ~ 1 + mileage, data=accords)
+model1
+```
+
+We can obtain more detailed information about our model with `summary`.
+
+-   `Estimate` provides the model coefficients.
+
+-   `Std. Error` provides the standard error of the coefficients.
+
+-   `t value` provides the t-statistic of each coefficients, which is something we have not covered explicitly in 131A.
+    As it turns out, this t-statistic is the coefficient divided by its standard error.
+
+-   `Pr(>|t|)` provides the two-sided p-value of a hypothesis test of whether the coefficient is significantly different from zero.
+
+```{r}
+summary(model1)
+```
+
+To extract the summary table as a dataframe, we can use the `tidy` function from the `broom` package.
+
+```{r}
+library(broom)
+
+model_summary_df = tidy(model1)
+model_summary_df
+```
+
+We can alternatively extract the coefficients of the model with the `coef` function.
+
+```{r}
+coef(model1)
+```
+
+## 🚀 Exercise 3
+
+Using the coefficients printed above, calculate the predicted price of a Honda accord with 50,000 miles.
+
+```{r}
+# Your code here!
+
+```
+
+## 🚀 Exercise 4
+
+Add two new columns to `model_summary_df`.
+
+-   The first column should be the lower bound of a 95% confidence interval for the coefficient in each row.
+
+-   The second column should be the upper bound of a 95% confidence interval for the coefficient in each row.
+
+-   Do your confidence intervals agree with the hypothesis test results in the summary table?
+    Explain in a code comment.
+
+```{r}
+# Your code here!
+
+```
+
+## Generating predictions with `predict`
+
+We can use the `predict` function to generate predictions from our linear model.
+
+-   To use the `predict` function, we need to pass in the model, and then use the `newdata` argument to specify the dataset for which we want to generate predictions.
+
+-   For example, we can compare the real price of the 122 Honda Accords in our data to the price predicted by our model.
+
+```{r}
+preds = predict(model1, newdata=accords)
+head(preds)
+```
+
+```{r}
+real_prices = accords$price
+head(real_prices)
+```
+
+```{r}
+residuals = real_prices - preds
+head(residuals)
+```
+
+We can collapse this entire process into a `dplyr` pipeline.
+
+-   Scroll to the far right of the dataset to see the new columns `preds` and `residuals`.
+
+```{r}
+accords %>% 
+  mutate(
+    # The . (dot) is replaced by the `accords` dataset,
+    # since `accords` was passed into %>% (the pipe).
+    preds = predict(model1, newdata=.),
+    residuals = price - preds
+  )
+```
+
+## 🚀 Exercise 5
+
+Fit a linear regression model predicting `price` from `mileage` in the `accords` dataset. Include both a linear and quadratic term for `mileage`.
+
+-   Call this new model `model2`.
+
+-   Add a new column to `accords` called `preds` that contains the predictions of `model2` on the `accords` data.
+
+- Add a new column called `residuals` that contains the residuals of `model2` when applied to the `accords` data.
+
+-   Save the modified accords data frame as `accords_w_preds`.
+
+```{r}
+# Your code here!
+
+```
+
+## 🚀 Exercise 6
+
+The sum of squared residuals (SSR) for a model that predicts the price of used cars is given by the following equation:
+
+$$
+\text{SSR} = \sum_{i=1}^{n} \left( \text{price}_i - \widehat{\text{price}}_i \right)^2
+$$
+
+The total sum of squares (TSS) for `model2` is the estimated variance of the `price` column.
+
+- $\overline{\text{price}}~~$ is the mean of the `price` column.
+
+$$
+\text{TSS} = \sum_{i=1}^{n} \left( \text{price}_i - \overline{\text{price}}~~\right)^2
+$$
+
+Using a column from `accords_w_preds`, calculate the sum of squared residuals (SSR) for `model2`.
+
+-   Then, calculate the total sum of squares (TSS) using the `price` column of the `accords` dataset.
+
+-   Finally, calculate $\frac{\text{TSS} - \text{SSR}}{\text{TSS}}$.
+
+-   How does this fraction compare to the $R^2$ value of `model2` given by the `summary` function?
+
+```{r}
+# Your code here!
+
+```
+
+## 🚀 Exercise 7
+
+Divide the SSR by the number of observations in `accords` to calculate the mean squared error (MSE) of `model2`.
+
+-   Finally, calculate the root mean squared error (RMSE) of `model2`.
+
+-   How does the RMSE compare to the residual standard error of `model2` given by the `summary` function?
+
+```{r}
+# Your code here!
+
+```
