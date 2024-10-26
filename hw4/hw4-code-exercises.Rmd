@@ -202,7 +202,7 @@ For each of the two high schools you identified, plot the undermatching rate as 
 
 ### 🚀 Part 1, Exercise 5
 
-Fit a linear regression model predicting the undermatching rate from the high school ID and Naviance access.
+Using the full Naviance dataset, fit a linear regression model predicting the undermatching rate from the high school ID and Naviance access.
 
 -   Print the summary of the model.
 
