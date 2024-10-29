@@ -1,0 +1,174 @@
+---
+output:
+  html_document:
+    df_print: paged
+editor_options: 
+  markdown: 
+    wrap: sentence
+---
+
+# 🚘 💵 Lab 8: Used cars and cross-validation
+
+<img src="img/cars.jpeg" alt="“cars”" width="500"/>\
+
+**Due Date**: Friday, November 8th at midnight.
+
+**Note:** HW4 includes material covered in this lab. HW4 is due Monday 11/4. So, aim to finish this lab by Friday 11/1.
+
+Labs are submitted via Gradescope.
+
+-   You will submit (1) a .Rmd file with your code, (2) a PDF of your code and output.
+-   To generate a PDF of your code and output, **do not knit to PDF**. Instead, knit your .Rmd file as HTML, open the HTML file in a web browser, and then **print the HTML as a PDF, making sure that none of your code or output is cut off.** You can generate an HTML file in RStudio by pressing `Knit` and then `Knit to HTML`.
+-   The knitting process will not work if there are errors in your code, so be sure to leave plenty of time to knit your lab notebooks before the deadline.
+
+## ✅ Setup and data import
+
+In this lab, we will explore underfitting, overfitting, and cross-validation with the same data from [Edmunds.com](https://edmunds.com) that we used in Lab 7.
+
+-   **Previous goal from Lab 7:** Predict the price of a used car using its features (e.g., color).
+
+-   **Goal of Lab 8:** Build a model that makes accurate predictions on data that was not used to train the model.
+
+```{r}
+# Load in additional functions
+library(tidyverse)
+library(lubridate)
+
+# Use three digits past the decimal point
+# Don't use scientific notation
+options(digits = 3, scipen=999)
+
+# Format plots with a white background and dark features.
+theme_set(theme_bw())
+
+cars = read_tsv("https://jdgrossman.com/assets/used-cars.tsv") %>% 
+  # All cars in the dataset are of type "used"
+  select(-type)
+
+# peek at 10 random rows
+sample_n(cars, 10)
+```
+
+## 🚀 Exercise 1
+
+Using the `sample` function, randomly divide the cars dataset into two pieces called `cars_training` and `cars_validation`.
+
+- `cars_training` should contain approximately 80\% of the dataset, while `cars_validation` should include 20\% of the dataset.
+
+- Make sure that there is no overlap between the two datasets.
+
+- Note that there are many different ways to split the data. You can ask PingPong to show you some different ways!
+
+```{r}
+# Your code here!
+
+# This code makes your random split the same every time you run the code.
+set.seed(131)
+
+```
+
+## 🚀 Exercise 2
+
+Fit a linear model to the `cars_training` dataset that predicts `price` based on `year`.
+
+- Store your model as `model_w_year`.
+
+- Print the summary of your model.
+
+- What is the interpretation of the `year` coefficient? 
+
+```{r}
+# Your code here!
+
+```
+
+## 🚀 Exercise 3
+
+Using `mutate` and `as.character` to convert the `year` column in the `cars_training` to a string.
+
+- Then, refit your model from Exercise 2, storing it as `model_w_str_year`.
+
+- How does the $R^2$ of `model_w_str_year` compare to the $R^2$ of `model_w_year` in Exercise 2? Why?
+
+```{r}
+# Your code here!
+
+```
+
+## 🚀 Exercise 4
+
+Compute the RMSE of `model_w_str_year` on the `cars_training` and `cars_validation` datasets.
+
+- Recall that RMSE is the root mean squared error, where error is defined as the difference between the predicted price and the actual price.
+
+- `predict(model, newdata = df)` will return the predicted outcomes for the data in dataframe `df`.
+
+- Are there any differences in the two RMSE values? What is the reason for this difference? 
+
+```{r}
+# Your code here!
+
+
+```
+
+## 🚀 Exercise 5
+
+Fit a new model to `cars_training` that predicts `price` based on `year`, `make`, and `mileage`.
+
+- Store your model as `model_w_year_make_mileage`.
+
+- Calculate the RMSE on the training data and the validation data. What do you notice?
+
+- Is there evidence of overfitting? Explain.
+
+```{r}
+# Your code here!
+
+```
+
+## ⚔️ K-fold cross validation
+
+In the last two exercises, we will estimate the out-of-sample RMSE of the `model_w_year_make_mileage` specification using cross-validation.
+
+Recall that K-fold cross-validation has the following steps:
+
+1. Split the data into K-folds of approximately the same size.
+
+2. Iterate from 1 to K. At each iteration, hold out one fold, and train the model on the remaining folds. Then, validate on the held-out fold.
+
+3. Average the results over the K iterations.
+
+## 🚀 Exercise 6
+
+Split the `cars` data into 5 folds of approximately equal size.
+
+- One way to do this: First, randomly shuffle the data. Then, label the rows with a fold number (e.g., 1, 2, 3, 4, 5, 1, 2, 3, 4, 5,...). You can use a new column for the fold number.
+
+- `sample_frac(df, 1)` will randomly shuffle the rows of dataframe `df`.
+
+- `rep(c(1,2,3), length.out = 8)` returns `c(1,2,3,1,2,3,1,2)`.
+
+```{r}
+# Your code here!
+
+```
+
+## 🚀 Exercise 7
+
+Using a `for` loop, iterate from 1 to 5.
+
+- At each iteration, hold out the fold with the corresponding fold number, and train the `model_w_year_make_mileage` specification on the remaining data.
+
+- Keep track of each RMSE in an external vector called `rmses`.
+
+- Finally, print the average of the RMSEs. 
+
+- How does this **CV RMSE** compare to the RMSE of the simple validation set above?
+
+- **Note:** Remember to convert the `year` column to a character as we did above.
+
+```{r}
+# Your code here!
+
+```
+
