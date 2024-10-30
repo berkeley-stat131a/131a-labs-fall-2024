@@ -389,7 +389,7 @@ Consider the three RMSE values from Exercises 3, 4, and 5. Answer each of the fo
 
 -   Why is the out-of-sample RMSE higher than the in-sample RMSE?
 
--   Why is the CV-estimated RMSE higher than the in-sample RMSE, **but to a lesser extent than the out-of-sample RMSE**?
+-   Why is the CV-estimated RMSE closer to the in-sample RMSE than the out-of-sample RMSE?
 
 ```{r}
 # Your code here!
