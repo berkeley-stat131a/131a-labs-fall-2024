@@ -1,0 +1,347 @@
+---
+title: "R Notebook"
+---
+
+# 🫀 STAT 131A, Fall 2024: Homework 5 Coding Questions
+
+![Anatomical heart](img/heart-disease.jpeg){width="300"}
+
+## ✅ Setup and data import
+
+In this lab, we will fit logistic regression models and LPMs that predict the presence of heart disease from a set covariates. The [dataset of patients](https://www.kaggle.com/datasets/fedesoriano/heart-failure-prediction) is aggregated across several studies.
+
+Make sure to run the cell below before getting started.
+
+```{r}
+# Load in additional functions
+library(tidyverse)
+library(lubridate)
+
+# Use three digits past the decimal point
+options(digits = 3)
+
+# Don't use scientific notation
+options(scipen = 999)
+
+# Format plots with a white background and dark features.
+theme_set(theme_bw())
+
+# Read in the data
+data = read_csv('data/heart_failure.csv')
+
+# peek at 10 random rows
+sample_n(data, 10)
+```
+
+## 🕵️ Part 1: Inference with LPMs and logistic regression
+
+### 🚀 Exercise 1
+
+Answer each of Exercise 1a, 1b, and 1c by generating a plot, fitting a **linear probability model (LPM)**, constructing a 95% confidence interval (CI), conducting a two-sided hypothesis test, and writing a one or two sentence answer as a code comment.
+
+-   In total, you will generate three plots, three LPMs, three CIs, three hypothesis tests, and three explanations.
+
+This may sound like a lot to do, but keep in mind that most of your code will be repeated across exercises.
+
+-   Each plot should visualize your model with one or more regression lines. `geom_smooth(method='lm', se=FALSE, fullrange=TRUE)` will be helpful.
+
+-   To help you see a wider range of the model fit, we recommend including `fullrange=TRUE` inside of `geom_smooth`, and adding `xlim(0,100)` to the end of your `ggplot2` code. This will plot the model across ages 0 through 100.
+
+-   No need to professionally format your plots. The default `ggplot2` parameters are fine for this assignment.
+
+-   For your hypothesis tests, be sure to state the null hypothesis and the significance level, and define any variables used in your null hypothesis. Your hypothesis test results can be copied directly from the regression output---no need to calculate anything by hand.
+
+#### 🚀 Exercise 1a
+
+Is there a statistically significant relationship between each additional year of life and a higher estimated risk of heart disease?
+
+```{r}
+# Your plotting code here!
+
+```
+
+```{r}
+# Your modeling code here!
+
+```
+
+```{r}
+# Your CI code here! 
+
+```
+
+```{r}
+# Your hypothesis test and written explanation as a code comment here!
+
+```
+
+#### 🚀 Exercise 1b (OPTIONAL, 3 POINTS OF EXTRA CREDIT)
+
+Conditional on age, do male patients have a significantly higher estimated risk of heart disease than females?
+
+-   It's tricky to fit a single-slope, multiple intercept model directly with `geom_smooth`.
+
+-   Instead, we recommend (1) fitting the relevant LPM, (2) generating predictions for your LPM using fake data that includes a range of values for `Age` and `Sex`, and (3) plotting those predictions with `geom_line` (not `geom_smooth`!).
+
+-   To generate predictions, we suggest using this fake dataset: `fake_data = tibble(Age=c(0:100, 0:100), Sex=c(rep('M', 101), rep('F', 101)))`
+
+```{r}
+# Your modeling and plotting code here!
+
+# Boilerplate code to get you started:
+
+# Fill this in with the predictions on `fake_data`:
+preds = NA
+
+ggplot() +
+  geom_point(data=data, aes(x=Age, y=HeartDisease), alpha=0.1) +
+  
+  # Uncomment this line once you generate `preds` above:
+  # geom_line(aes(x=fake_data$Age, y=preds, color=fake_data$Sex), fullrange=TRUE) +
+  
+  xlim(0, 100)
+
+```
+
+```{r}
+# Your CI code here!
+
+```
+
+```{r}
+# Your hypothesis test and written explanation as a code comment here!
+
+```
+
+#### 🚀 Exercise 1c
+
+Does the estimated change in heart disease risk for each additional year of life significantly differ for male patients versus female patients?
+
+-   `geom_smooth` automatically interacts the `x` and `color` parameters, so your code should be very similar to Exercise 1a, with only one minor change to both your plotting and modeling code.
+
+```{r}
+# Your plotting code here!
+
+```
+
+```{r}
+# Your modeling code here!
+
+```
+
+```{r}
+# Your CI code here!
+
+```
+
+```{r}
+# Your hypothesis test and written explanation as a code comment here! 
+
+```
+
+### 🚀 Exercise 2
+
+Repeat the three parts of Exercise 1, but use a **logistic regression model instead of an LPM**.
+
+-   This question is intended to show you the similarities and differences of linear and logistic regression.
+
+-   You should be able to re-use all of your code and code comments from Exercise 1, with just minor edits!
+
+-   Additionally, in each part below, **be sure to indicate whether the logistic regression results are consistent with the LPM results**.
+
+-   To plot a logistic regression model with `geom_smooth`, replace `geom_smooth(method='lm', se=FALSE, fullrange=TRUE)` with `geom_smooth(method='glm', method.args=list(family='binomial'), se=FALSE, fullrange=TRUE)`.
+
+#### 🚀 Exercise 2a
+
+Is each additional year of life significantly associated with a higher estimated risk of heart disease?
+
+```{r}
+# Your plotting code here!
+
+# While not required, you may find it interesting to plot the LPM on the same
+# set of axes. It's only one additional line of code.
+
+```
+
+```{r}
+# Your modeling code here!
+
+```
+
+```{r}
+# Your CI code here! 
+
+```
+
+```{r}
+# Your hypothesis test and written explanation as a code comment here!
+
+# Be sure to state whether the logistic regression hypothesis test
+# results are consistent with the corresponding LPM hypothesis test results.
+
+```
+
+#### 🚀 Exercise 2b (OPTIONAL, 3 POINTS OF EXTRA CREDIT)
+
+For a male patient and a female patient of the same age, does the male patient have a significantly higher estimated risk of heart disease?
+
+-   Like above, be sure to use `fake_data` to generate your predictions.
+
+-   Hint: Remember that `predict` will produce predictions on the log odds scale for a logistic regression model. To get probabilties, be sure to include `type='response'` inside of `predict`.
+
+```{r}
+# Your modeling and plotting code here!
+
+# Boilerplate code to get you started:
+
+# Fill this in with the predictions on `fake_data`:
+preds = NA
+
+ggplot() +
+  geom_point(data=data, aes(x=Age, y=HeartDisease), alpha=0.1) +
+  
+  # Uncomment this line once you generate `preds` above:
+  # geom_line(aes(x=fake_data$Age, y=preds, color=fake_data$Sex), fullrange=TRUE) +
+  
+  xlim(0, 100)
+
+```
+
+```{r}
+# Your CI code here!
+
+```
+
+```{r}
+# Your hypothesis test and written explanation as a code comment here!
+
+# Be sure to state whether the logistic regression hypothesis test
+# results are consistent with the corresponding LPM hypothesis test results.
+
+```
+
+#### 🚀 Exercise 2c
+
+Does the estimated change in heart disease risk for each additional year of life significantly differ for male patients versus female patients?
+
+-   `geom_smooth` automatically interacts the `x` and `color` parameters, so your code should be very similar to Exercise 1a.
+
+```{r}
+# Your plotting code here!
+
+# As above, while not required, you may find it interesting to plot
+# the corresponding LPM on the same axes, which only takes one
+# extra line of code.
+
+```
+
+```{r}
+# Your modeling code here!
+
+```
+
+```{r}
+# Your CI code here!
+
+```
+
+```{r}
+# Your code and code comment here! 
+
+# Be sure to state whether the logistic regression hypothesis test
+# results are consistent with the corresponding LPM hypothesis test results.
+
+```
+
+## 🎯 Part 2: Classification error metrics with LPMs and logistic regression
+
+### 🚀 Exercise 3
+
+First, fit a logistic regression model that predicts the incidence of heart disease using **all** covariates in the dataset.
+
+-   Store the model in a variable called `glm_model`.
+
+Then, generate in-sample estimated probabilities of heart disease for each observation in the dataset.
+
+-   Store your probabilities in a variable called `glm_probs`.
+
+-   Print out the first couple probabilities with `head()`.
+
+```{r}
+# Your code here!
+
+```
+
+### 🚀 Exercise 4
+
+Convert your in-sample probabilities to a 0/1 prediction of heart disease using a 0.5 threshold.
+
+-   Store your predictions in a variable called `preds`.
+
+Then, calculate the number of true positives, true negatives, false positives, and false negatives under this threshold.
+
+-   To do this, you'll need the actual outcomes from the `HeartDisease` column, which you should store in a vector called `actual`.
+
+-   You may find `sum`, `&`, and `==` useful.
+
+-   This is a nice coding exercise to try to complete without PingPong 🙂 Good review of intro CS material on booleans!
+
+Finally, calculate the true positive rate (TPR) and false positive rate (FPR) under this threshold.
+
+-   Store your threshold, the count of TPs, TNs, FPs, and FNs, along with the TPR and FPR in a named vector. For example, `my_vector = c(threshold = [ REPLACE w/ THRESHOLD ], tp = [ REPLACE W/ TP COUNT ], ... , fpr = [ REPLACE W/ FPR ])`.
+
+-   Print this vector.
+
+-   To help make sure you are on the right track, the TPR and FPR should be close to 0.9 and 0.17.
+
+*Note: You are not allowed use an external package to complete any part of this exercise.*
+
+```{r}
+# Your code here!
+
+```
+
+### 🚀 Exercise 5
+
+Convert your code from Exercise 4 into a function called `get_tpr_fpr` that takes the following as inputs:
+
+-   `actual`: A vector of actual 0/1 outcomes
+
+-   `probs`: A vector of estimated probabilities corresponding to each outcome.
+
+-   `threshold`: A threshold value between 0 and 1.
+
+Using your function, calculate the TPR and FPR for the logistic regression model using a threshold of 0, 0.5, and 1.
+
+-   To check your answer, you can compare to the lecture slides for the 0 and 1 thresholds, and to the previous problem for the 0.5 threshold.
+
+```{r}
+# Your code here!
+
+```
+
+### 🚀 Exercise 7 (OPTIONAL, 2 POINTS OF EXTRA CREDIT)
+
+Add an ROC line to your plot from Exercise 6 that corresponds to an LPM model with the same specification as the logistic regression model.
+
+-   You should be able to re-use most of your code above!
+
+-   Is there a noticeable difference in the ROC curves? State your findings as a one-sentence code comment.
+
+```{r}
+# Your code here!
+
+```
+
+### 🚀 Exercise 8
+
+Suppose a missed heart disease detection is 100 times more costly than a false detection.
+
+-   By modifying `roc_df`, identify and print the threshold that minimizes the linear cost function associated with this tradeoff.
+
+-   A linear cost function has the same form as the cost function shared in lecture.
+
+```{r}
+# Your code here!
+
+```
