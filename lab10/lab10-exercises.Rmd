@@ -1,0 +1,190 @@
+---
+output:
+  html_document:
+    df_print: paged
+editor_options: 
+  markdown: 
+    wrap: sentence
+---
+
+# 📨 Lab 10: Predicting spam emails with logistic regression
+
+![“strongman”](img/strongest-man.png){alt="“strongman”" width="400"}\
+
+**Due Date**: Friday, November 22nd at midnight.
+
+Labs are submitted via Gradescope.
+
+-   You will submit (1) a .Rmd file with your code, (2) a PDF of your code and output.
+-   To generate a PDF of your code and output, **do not knit to PDF**. Instead, knit your .Rmd file as HTML, open the HTML file in a web browser, and then **print the HTML as a PDF, making sure that none of your code or output is cut off.** You can generate an HTML file in RStudio by pressing `Knit` and then `Knit to HTML`.
+-   The knitting process will not work if there are errors in your code, so be sure to leave plenty of time to knit your lab notebooks before the deadline.
+
+## ✅ Setup and data import
+
+In this lab, we will fit a logistic regression model to predict whether a particular email is spam.
+
+-   The dataset we use (`spam.csv`) is adapted from the [Spambase data in the UCI Machine Learning Repository](https://archive.ics.uci.edu/dataset/94/spambase).
+
+-   The UCI ML repository contains many canonical datasets for assessing machine learning models, like logistic regression!
+
+-   The dataset has a 0/1 column for whether the email is spam (`is_spam`).
+
+-   For the remaining columns, you can read their descriptions [here](https://search.r-project.org/CRAN/refmans/kernlab/html/spam.html).
+    Most columns measure the relative frequency of a particular word or character, measured in percentage points.
+
+```{r}
+# Load in additional functions
+library(tidyverse)
+
+# Use three digits past the decimal point
+# Don't use scientific notation
+options(digits = 3, scipen=999)
+
+# Format plots with a white background and dark features.
+theme_set(theme_bw())
+
+spam = read_csv("data/spam.csv")
+
+# peek at 10 random rows
+sample_n(spam, 10)
+```
+
+## 🚀 Exercise 1
+
+Using `glm`, fit a logistic regression model predicting whether an email is spam based on the `capital_run_length_longest` variable.
+
+-   Print a summary of your model.
+
+-   Be sure to include an intercept.
+
+-   Here's a template for fitting a logistic regression model in `R`: `glm(y ~ 1 + x, data = df, family = binomial)`
+
+-   You can replace with `binomial` with `"binomial"` or `binomial()`.
+    They all do the same thing!
+
+```{r}
+# Your code and code comment here!
+
+```
+
+## 🚀 Exercise 2
+
+In a code comment, interpret the intercept and slope coefficients in your previous model **in terms of log-odds**.
+
+-   Remember that we can write a logistic regression model like this:
+
+$$
+\Pr(Y=1) = \text{logit}^{-1}(\beta_0 + \beta_1 X)
+$$ or any of these three ways, which are all equivalent:
+
+$$
+\begin{align}
+\text{logit}(\Pr(Y=1)) & = \beta_0 + \beta_1 X \\
+\log\left(\frac{\Pr(Y=1)}{1 - \Pr(Y=1)}\right) & = \beta_0 + \beta_1 X \\
+\log (\text{odds}(Y=1) & = \beta_0 + \beta_1 X
+\end{align}
+$$
+
+```{r}
+# Your code comment here!
+
+```
+
+## 🚀 Exercise 3
+
+If we exponentiate both sides of the last equation above, we get the following:
+
+$$
+\begin{align}
+\text{odds}(Y=1) & = e^{\beta_0 + \beta_1 X} \\
+& = e^{\beta_0} e^{\beta_1 X}
+\end{align}
+$$ If we were to increase $X$ by 1, we would get the following:
+
+$$
+\begin{align}
+\text{odds}(Y=1)_\text{new} & = e^{\beta_0} e^{\beta_1 (X + 1)} \\
+& = e^{\beta_0} e^{\beta_1 X + \beta_1} \\
+& = e^{\beta_0} e^{\beta_1 X} e^{\beta_1} \\
+& = \text{odds}(Y=1) \times e^{\beta_1}
+\end{align}
+$$
+
+Using the logic above to help you, interpret the exponentiated values of the intercept and slope coefficients of your model in terms of **odds**.
+
+-   To get exponentiated coefficients from `model`, you can write `exp(coef(model))`.
+
+```{r}
+# Your code and code comment here!
+
+```
+
+## 🚀 Exercise 4
+
+The logit and inverse logit functions are defined in the cell below.
+Make sure to run the cell!
+
+```{r}
+logit = function(x) {
+  log(x / (1 - x))
+}
+
+inv_logit = function(x) {
+  exp(x) / (1 + exp(x))
+}
+```
+
+Using the coefficients from your model, the functions directly above, and equations way above, calculate the estimated **log odds**, **odds**, and **probability** that an email with a longest capital run length of 15 (e.g., `HELLO SIR GOOD DAY`) is spam.
+
+```{r}
+# Your code here!
+
+```
+
+## 🚀 Exercise 5
+
+`predict(model)` will provide the in-sample predictions of many models in `R`.
+
+-   In-sample predictions refer to the predicted outcomes for the data on which the model is trained.
+-   You can also write `predict(model, newdata=training_data)` , where `training_data` is the data on which the model is trained.
+
+For a logistic regression model, `predict(model)` will return in-sample estimated **log odds**.
+
+-   You can write `predict(model, type="response")` to get estimated **probabilities** instead.
+
+Generate in-sample estimated probabilities of your logistic regression model above.
+
+-   Then, convert your probabilities to 0/1 predictions using a threshold of 0.5.
+
+-   Finally, calculate the accuracy of your model under this threshold.
+
+-   Remember that the original dataset contains the true `is_spam` outcome, which you need to compare your predictions to.
+
+```{r}
+# Your code here!
+
+```
+
+## 🚀 Exercise 6
+
+Wrap your solution in the previous exercise into a function that takes a threshold as the input, and returns the accuracy of our model given that threshold.
+
+-   Confirm your model is working as intended by computing the accuracy under thresholds of 0, 0.5, and 1.
+
+-   Recall from lecture what accuracy will be if we always predict 0 or always predict 1.
+
+```{r}
+# Your code here!
+
+```
+
+## 🚀 Exercise 7
+
+What is the true positive rate and false positive rate of your model under thresholds of 0, 0.5, and 1?
+
+-   Modify your function above to answer this question.
+
+```{r}
+# Your code here!
+
+```
