@@ -403,16 +403,16 @@ sample_n(data, 10)</code></pre>
 <pre><code>## # A tibble: 10 × 12
 ##      Age Sex   ChestPainType RestingBP Cholesterol FastingBS RestingECG MaxHR
 ##    &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;             &lt;dbl&gt;       &lt;dbl&gt;     &lt;dbl&gt; &lt;chr&gt;      &lt;dbl&gt;
-##  1    62 M     ASY                 115           0         1 Normal        72
-##  2    60 M     NAP                 115           0         1 Normal       143
-##  3    67 F     NAP                 152         277         0 Normal       172
-##  4    54 M     NAP                 120         258         0 LVH          147
-##  5    42 F     ASY                 102         265         0 LVH          122
-##  6    64 M     ASY                 130         223         0 ST           128
-##  7    46 M     ATA                 101         197         1 Normal       156
-##  8    60 M     ASY                 136         195         0 Normal       126
-##  9    57 M     ASY                 140           0         0 Normal       120
-## 10    50 F     ASY                 120         328         0 Normal       110
+##  1    51 M     ASY                 130           0         1 Normal       170
+##  2    38 M     ASY                 110         190         0 Normal       150
+##  3    58 M     ASY                 120           0         0 LVH          106
+##  4    48 F     ASY                 138         214         0 Normal       108
+##  5    62 M     ATA                 140         271         0 Normal       152
+##  6    58 M     ASY                 116           0         0 Normal       124
+##  7    43 M     ASY                 140           0         0 ST           140
+##  8    63 M     ASY                 150         223         0 Normal       115
+##  9    61 M     ASY                 150           0         0 Normal       105
+## 10    56 M     NAP                 130         256         1 LVH          142
 ## # ℹ 4 more variables: ExerciseAngina &lt;chr&gt;, Oldpeak &lt;dbl&gt;, ST_Slope &lt;chr&gt;,
 ## #   HeartDisease &lt;dbl&gt;</code></pre>
 </div>
@@ -597,7 +597,7 @@ to Exercise 1a.</li>
 </div>
 </div>
 <div id="part-2-classification-error-metrics-with-lpms-and-logistic-regression" class="section level2">
-<h2>Part 2: Classification error metrics with LPMs and logistic
+<h2>🎯 Part 2: Classification error metrics with LPMs and logistic
 regression</h2>
 <div id="exercise-3" class="section level3">
 <h3>🚀 Exercise 3</h3>
@@ -665,6 +665,48 @@ regression model using a threshold of 0, 0.5, and 1.</p>
 <li>To check your answer, you can compare to the lecture slides for the
 0 and 1 thresholds, and to the previous problem for the 0.5
 threshold.</li>
+</ul>
+<pre class="r"><code># Your code here!</code></pre>
+</div>
+<div id="exercise-6" class="section level3">
+<h3>🚀 Exercise 6</h3>
+<p>Now, for a little magic:</p>
+<ul>
+<li><code>map_dfr</code> will create a dataframe (<code>df</code>) by
+rows (<code>r</code>) by applying a function to each element of a list,
+and then stacking the results on top of one another.</li>
+</ul>
+<p>For example:</p>
+<pre class="r"><code># Convert a number into a two-element vector with the number, and its square.
+test_function = function(x) {
+  
+  return(c(input = x, squared_input = x^2))
+  
+}
+
+# Produce a vector for each input of 1 through 5, and then stack these
+# vectors on top of one another to make a dataframe.
+map_dfr(1:5, ~ test_function(.x))</code></pre>
+<pre><code>## # A tibble: 5 × 2
+##   input squared_input
+##   &lt;dbl&gt;         &lt;dbl&gt;
+## 1     1             1
+## 2     2             4
+## 3     3             9
+## 4     4            16
+## 5     5            25</code></pre>
+<p>Using <code>map_dfr</code> and your <code>get_tpr_fpr</code>
+function, we can iterate over thresholds from 0 to 1 in increments of
+0.01, and calculate the TPR and FPR at each threshold:</p>
+<pre class="r"><code># Uncomment and run these lines once you calculate `actual` and `glm_probs`.
+# roc_df = map_dfr(seq(0, 1, 0.01), ~ get_tpr_fpr(actual, glm_probs, threshold=.x))
+# head(roc_df)</code></pre>
+<p>Using <code>roc_df</code>, plot the ROC curve corresponding to our
+logistic regression model.</p>
+<ul>
+<li><p>Add a dashed <code>y=x</code> line to your plot with
+<code>geom_abline(linetype=&#39;dashed&#39;)</code>.</p></li>
+<li><p>No need to professionally format your plot!</p></li>
 </ul>
 <pre class="r"><code># Your code here!</code></pre>
 </div>

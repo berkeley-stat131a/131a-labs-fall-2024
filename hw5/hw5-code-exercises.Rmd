@@ -320,6 +320,46 @@ Using your function, calculate the TPR and FPR for the logistic regression model
 
 ```
 
+### 🚀 Exercise 6
+
+Now, for a little magic:
+
+-   `map_dfr` will create a dataframe (`df`) by rows (`r`) by applying a function to each element of a list, and then stacking the results on top of one another.
+
+For example:
+
+```{r}
+# Convert a number into a two-element vector with the number, and its square.
+test_function = function(x) {
+  
+  return(c(input = x, squared_input = x^2))
+  
+}
+
+# Produce a vector for each input of 1 through 5, and then stack these
+# vectors on top of one another to make a dataframe.
+map_dfr(1:5, ~ test_function(.x))
+```
+
+Using `map_dfr` and your `get_tpr_fpr` function, we can iterate over thresholds from 0 to 1 in increments of 0.01, and calculate the TPR and FPR at each threshold:
+
+```{r}
+# Uncomment and run these lines once you calculate `actual` and `glm_probs`.
+# roc_df = map_dfr(seq(0, 1, 0.01), ~ get_tpr_fpr(actual, glm_probs, threshold=.x))
+# head(roc_df)
+```
+
+Using `roc_df`, plot the ROC curve corresponding to our logistic regression model.
+
+-   Add a dashed `y=x` line to your plot with `geom_abline(linetype='dashed')`.
+
+-   No need to professionally format your plot!
+
+```{r}
+# Your code here!
+
+```
+
 ### 🚀 Exercise 7 (OPTIONAL, 2 POINTS OF EXTRA CREDIT)
 
 Add an ROC line to your plot from Exercise 6 that corresponds to an LPM model with the same specification as the logistic regression model.
